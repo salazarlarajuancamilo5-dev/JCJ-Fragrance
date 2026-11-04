@@ -1,0 +1,39 @@
+<!--TITLE=Catálogo de decants · JCJ Fragrance-->
+<!--DESC=Explora el catálogo de decants de JCJ Fragrance: fragancias seleccionadas en 5, 10 y 30 ml. Filtra por marca, familia olfativa y tamaño.-->
+<!--PAGE=catalogo-->
+  <main id="main">
+    <section class="page-head">
+      <div class="container">
+        <p class="eyebrow">Catálogo</p>
+        <h1 class="h1">Explorar colección</h1>
+        <p class="lead">Fragancias seleccionadas, cada una en formatos de 5, 10 y 30 ml. Precios reales por formato.</p>
+      </div>
+    </section>
+    <div class="container catalog">
+      <aside>
+        <button class="btn btn-secondary btn-sm btn-block filters-toggle" id="filters-toggle" aria-expanded="false" aria-controls="filters" style="margin-bottom:12px">Filtrar</button>
+        <div class="filters" id="filters"></div>
+      </aside>
+      <section aria-label="Resultados">
+        <div class="toolbar">
+          <p class="muted" id="result-count" aria-live="polite"></p>
+          <label class="select"><span class="sr-only">Ordenar</span>
+            <select id="sort">
+              <option value="featured">Destacados</option>
+              <option value="price-asc">Precio: menor a mayor</option>
+              <option value="price-desc">Precio: mayor a menor</option>
+              <option value="name">Nombre A–Z</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid grid-3" id="catalog-grid"></div>
+        <div class="bg-warm" style="margin-top:56px;padding:36px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+          <div>
+            <p class="h-serif" style="margin-bottom:6px">¿Buscas una fragancia que no está aquí?</p>
+            <p class="muted small">Cuéntanos cuál y te confirmamos si podemos traerla en decant.</p>
+          </div>
+          <a class="btn btn-primary" data-wa="Hola JCJ Fragrance, ¿pueden conseguir un decant de: ">Preguntar por WhatsApp</a>
+        </div>
+      </section>
+    </div>
+  </main>

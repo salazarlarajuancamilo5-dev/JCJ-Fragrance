@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de decants · JCJ Fragrance</title>
+  <meta name="description" content="Explora el catálogo de decants de JCJ Fragrance: fragancias seleccionadas en 5, 10 y 30 ml. Filtra por marca, familia olfativa y tamaño.">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Catálogo de decants · JCJ Fragrance">
+  <meta property="og:description" content="Explora el catálogo de decants de JCJ Fragrance: fragancias seleccionadas en 5, 10 y 30 ml. Filtra por marca, familia olfativa y tamaño.">
+  <meta property="og:image" content="assets/brand/og-image.jpg">
+  <meta property="og:locale" content="es_CO">
+  <link rel="icon" href="assets/brand/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="catalogo">
+  <a class="skip" href="#main">Saltar al contenido</a>
+  <div id="site-header"></div>
+
+  <main id="main">
+    <section class="page-head">
+      <div class="container">
+        <p class="eyebrow">Catálogo</p>
+        <h1 class="h1">Explorar colección</h1>
+        <p class="lead">Fragancias seleccionadas, cada una en formatos de 5, 10 y 30 ml. Precios reales por formato.</p>
+      </div>
+    </section>
+    <div class="container catalog">
+      <aside>
+        <button class="btn btn-secondary btn-sm btn-block filters-toggle" id="filters-toggle" aria-expanded="false" aria-controls="filters" style="margin-bottom:12px">Filtrar</button>
+        <div class="filters" id="filters"></div>
+      </aside>
+      <section aria-label="Resultados">
+        <div class="toolbar">
+          <p class="muted" id="result-count" aria-live="polite"></p>
+          <label class="select"><span class="sr-only">Ordenar</span>
+            <select id="sort">
+              <option value="featured">Destacados</option>
+              <option value="price-asc">Precio: menor a mayor</option>
+              <option value="price-desc">Precio: mayor a menor</option>
+              <option value="name">Nombre A–Z</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid grid-3" id="catalog-grid"></div>
+        <div class="bg-warm" style="margin-top:56px;padding:36px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+          <div>
+            <p class="h-serif" style="margin-bottom:6px">¿Buscas una fragancia que no está aquí?</p>
+            <p class="muted small">Cuéntanos cuál y te confirmamos si podemos traerla en decant.</p>
+          </div>
+          <a class="btn btn-primary" data-wa="Hola JCJ Fragrance, ¿pueden conseguir un decant de: ">Preguntar por WhatsApp</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
