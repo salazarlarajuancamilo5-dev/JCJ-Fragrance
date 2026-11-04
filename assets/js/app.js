@@ -87,9 +87,16 @@
     return `<div class="trio">${C.sizes.map((s) => `<div class="trio-item">${decantSVG(p, s)}</div>`).join("")}</div>`;
   }
 
-  function media(p, ml, i = 0) {
-    if (p.images && p.images[i]) return `<img src="${esc(p.images[i])}" alt="Decant de ${esc(p.name)} — ${esc(p.house)}" loading="lazy">`;
+  const photo = (p, ml) => (p.images && p.images[ml]) || "";
+  const img = (src, alt, eager) => `<img class="photo" src="${esc(src)}" alt="${esc(alt)}" width="960" height="1200" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
+  function media(p, ml, eager = false) {
+    const src = photo(p, ml);
+    if (src) return img(src, `Decant ${p.name} de ${ml} ml — JCJ Fragrance`, eager);
     return decantSVG(p, ml, { fit: true });
+  }
+  function altMedia(p) {
+    const g = p.gallery && p.gallery[0];
+    return g ? `<img class="photo photo-wide" src="${esc(g)}" alt="" loading="lazy" decoding="async">` : trioSVG(p);
   }
 
   /* ---------- Carrito ---------- */
@@ -122,7 +129,7 @@
     const info = getInfo();
     const lines = Cart.items.map((i) => {
       const p = bySlug(i.slug);
-      return `• Decant ${p.name} (${p.house}) · ${i.ml} ml × ${i.qty} — ${fmt(p.prices[i.ml] * i.qty)}`;
+      return `- ${p.name} (${p.house}), ${i.ml} ml x ${i.qty}: ${fmt(p.prices[i.ml] * i.qty)}`;
     });
     let msg = `Hola JCJ Fragrance, quiero hacer este pedido:\n\n${lines.join("\n")}\n\nSubtotal: ${fmt(Cart.total())} COP`;
     if (info.name) msg += `\nNombre: ${info.name}`;
@@ -135,11 +142,11 @@
   /* ---------- Header / Footer ---------- */
   function navLinks() {
     return [
-      ["catalogo.html", "Catálogo"],
-      ["index.html#formatos", "Formatos"],
-      ["index.html#como-funciona", "Cómo funciona"],
-      ["index.html#nosotros", "Nosotros"],
-      ["index.html#preguntas", "Preguntas"],
+      ["catalogo.html", "Perfumes"],
+      ["index.html#formatos", "Tamaños"],
+      ["index.html#como-funciona", "Cómo pedir"],
+      ["nosotros.html", "Nosotros"],
+      ["preguntas.html", "Preguntas"],
     ];
   }
 
@@ -148,11 +155,9 @@
     const header = $("#site-header");
     if (header) {
       header.innerHTML = `
-      <div class="announce" role="note">
-        <div class="announce-track">
-          <span>Decants de 5, 10 y 30 ml</span><span aria-hidden="true">·</span>
-          <span>Envíos a toda Colombia</span><span aria-hidden="true">·</span>
-          <span>Pedidos y asesoría por WhatsApp</span>
+      <div class="announce" role="note" aria-label="Envíos a toda Colombia. Decants de 5, 10 y 30 ml. Pedidos por WhatsApp.">
+        <div class="marquee" aria-hidden="true">
+          ${[0, 1].map(() => `<div class="marquee-group">${["Envíos a toda Colombia", "Decants de 5, 10 y 30 ml", "Khamrah", "212 VIP Black", "Jean Paul Gaultier", "Pedidos por WhatsApp 320 650 6648"].map((t) => `<span>${t}</span><img src="assets/brand/monogram-white.png" alt="" width="14" height="13">`).join("")}</div>`).join("")}
         </div>
       </div>
       <div class="header-bar" role="banner">
@@ -163,7 +168,7 @@
             <span class="logo-word"><span class="logo-name">JCJ</span><span class="logo-sub">Fragrance</span></span>
           </a>
           <nav class="main-nav" aria-label="Principal">
-            ${navLinks().map(([h, t]) => `<a href="${h}" ${page === "catalogo" && h === "catalogo.html" ? 'aria-current="page"' : ""}>${t}</a>`).join("")}
+            ${navLinks().map(([h, t]) => `<a href="${h}" ${(page === "catalogo" && h === "catalogo.html") || (page === "nosotros" && h === "nosotros.html") || (page === "preguntas" && h === "preguntas.html") ? 'aria-current="page"' : ""}>${t}</a>`).join("")}
           </nav>
           <div class="header-actions">
             <a class="icon-btn hide-sm" href="${igLink}" target="_blank" rel="noopener" aria-label="Instagram">${I.instagram}</a>
@@ -192,17 +197,18 @@
           <div class="footer-brand">
             <img src="assets/brand/signature-white.png" alt="JCJ Fragrance" width="120" height="136" loading="lazy">
             <p class="footer-tag">${C.tagline}</p>
-            <p class="muted">Boutique de decants. Selección curada de fragancias en formatos de 5, 10 y 30 ml.</p>
+            <p class="muted">Perfumes en atomizadores de 5, 10 y 30 ml, preparados a mano y enviados a toda Colombia.</p>
           </div>
           <div class="footer-col">
             <h3>Tienda</h3>
-            <a href="catalogo.html">Catálogo completo</a>
+            <a href="catalogo.html">Todos los perfumes</a>
             ${P.map((p) => `<a href="producto.html?p=${p.slug}">${esc(p.name)}</a>`).join("")}
           </div>
           <div class="footer-col">
             <h3>Ayuda</h3>
-            <a href="index.html#como-funciona">Cómo funciona</a>
-            <a href="index.html#preguntas">Preguntas frecuentes</a>
+            <a href="index.html#como-funciona">Cómo pedir</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="preguntas.html">Preguntas frecuentes</a>
             <a href="envios.html">Envíos, cambios y garantía</a>
             <a href="${waLink("Hola JCJ Fragrance, necesito ayuda con un pedido.")}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
           </div>
@@ -300,8 +306,8 @@
         <div class="cart-empty">
           <img src="assets/brand/monogram-black.png" alt="" width="56" height="54">
           <p class="h-serif">Tu bolsa está vacía</p>
-          <p class="muted">Descubre una fragancia en formato de 5 ml antes de elegir tu tamaño ideal.</p>
-          <a class="btn btn-primary" href="catalogo.html">Descubrir fragancias</a>
+          <p class="muted">Empieza con 5 ml y prueba el perfume con calma.</p>
+          <a class="btn btn-primary" href="catalogo.html">Ver perfumes</a>
         </div>`;
       foot.innerHTML = "";
       return;
@@ -314,7 +320,7 @@
         <div class="cart-info">
           <p class="cart-house">${esc(p.house)}</p>
           <a class="cart-name" href="producto.html?p=${p.slug}">Decant ${esc(p.name)}</a>
-          <p class="cart-size">${i.ml} ml · ${fmt(p.prices[i.ml])}</p>
+          <p class="cart-size">${i.ml} ml, ${fmt(p.prices[i.ml])} c/u</p>
           <div class="qty qty-sm" data-slug="${p.slug}" data-ml="${i.ml}">
             <button data-d="-1" aria-label="Quitar una unidad">${I.minus}</button>
             <span aria-label="Cantidad">${i.qty}</span>
@@ -368,7 +374,7 @@
     if (!p || !p.stock[ml]) return;
     Cart.add(slug, ml, qty);
     track("AddToCart", { content_ids: [`${slug}-${ml}`], value: p.prices[ml] * qty, currency: "COP" });
-    if (open) openDrawer(); else toast(`Agregado: <strong>${esc(p.name)} · ${ml} ml</strong>`);
+    if (open) openDrawer(); else toast(`Agregado: <strong>${esc(p.name)}, ${ml} ml</strong>`);
   }
 
   /* ---------- Analítica (solo con consentimiento) ---------- */
@@ -385,14 +391,13 @@
     return `
     <article class="card reveal" data-slug="${p.slug}" data-ml="${def}">
       <a class="card-media" href="producto.html?p=${p.slug}" aria-label="Ver detalles de ${esc(p.name)}">
-        ${p.badge ? `<span class="badge">${esc(p.badge)}</span>` : ""}
         <div class="card-img">${media(p, def)}</div>
-        <div class="card-img card-img-alt" aria-hidden="true">${p.images && p.images[1] ? media(p, def, 1) : trioSVG(p)}</div>
+        <div class="card-img card-img-alt" aria-hidden="true">${altMedia(p)}</div>
       </a>
       <div class="card-body">
         <p class="card-house">${esc(p.house)}</p>
         <h3 class="card-title"><a href="producto.html?p=${p.slug}">${esc(p.name)}</a></h3>
-        <p class="card-meta">${esc(p.family)} · ${esc(p.gender)}</p>
+        <p class="card-meta">${esc(p.short)}</p>
         <div class="sizes" role="radiogroup" aria-label="Tamaño">
           ${C.sizes.map((s) => `<button role="radio" aria-checked="${s === def}" class="size ${s === def ? "on" : ""}" data-ml="${s}" ${p.stock[s] ? "" : "disabled"}>${s} ml</button>`).join("")}
         </div>
@@ -413,7 +418,7 @@
         $$(".size", card).forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", String(x === b)); });
         $(".price-val", card).textContent = fmt(p.prices[ml]);
         $(".price-unit", card).textContent = ` / ${ml} ml`;
-        if (!p.images || !p.images.length) $(".card-img", card).innerHTML = decantSVG(p, ml, { fit: true });
+        $(".card-img", card).innerHTML = media(p, ml);
       }));
       $(".add", card).addEventListener("click", () => addToCart(p.slug, +card.dataset.ml, 1, false));
     });
@@ -423,12 +428,56 @@
   /* ---------- Reveal ---------- */
   let io;
   function observeReveal(root = document) {
-    const els = $$(".reveal:not(.in)", root);
+    const els = $$(".reveal:not(.in), .reveal-img:not(.in)", root);
     if (reduceMotion || !("IntersectionObserver" in window)) { els.forEach((e) => e.classList.add("in")); return; }
     io = io || new IntersectionObserver((entries) => entries.forEach((en) => {
       if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
     }), { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
     els.forEach((e) => io.observe(e));
+  }
+
+  /* ---------- Titulares palabra por palabra ---------- */
+  function splitHeadings() {
+    $$("[data-split]").forEach((el) => {
+      if (el.dataset.splitDone) return;
+      el.dataset.splitDone = "1";
+      el.setAttribute("aria-label", el.textContent.trim());
+      const words = el.textContent.trim().split(/\s+/);
+      el.innerHTML = words.map((w, i) => `<span class="w" aria-hidden="true"><span style="--d:${i * 55}ms">${esc(w)}</span></span>`).join(" ");
+      el.classList.add("reveal", "words");
+    });
+  }
+
+  /* ---------- Movimiento ligado al scroll ---------- */
+  function motion() {
+    const hero = $(".hero"), zoom = $(".hero-zoom"), content = $(".hero-content");
+    const par = $$("[data-parallax]");
+    const header = $(".header-bar");
+    if (reduceMotion) return;
+    let ticking = false;
+    const frame = () => {
+      ticking = false;
+      const y = window.scrollY, vh = window.innerHeight;
+      if (hero && zoom && y < vh * 1.2) {
+        const t = Math.min(y / vh, 1);
+        zoom.style.setProperty("--sy", `${t * 70}px`);
+        zoom.style.setProperty("--ss", String(1 - t * 0.06));
+        content.style.opacity = String(1 - t * 1.4);
+        content.style.transform = `translateY(${t * -40}px)`;
+      }
+      par.forEach((img) => {
+        const r = img.parentElement.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        const k = parseFloat(img.dataset.parallax) || 0.1;
+        const c = (r.top + r.height / 2 - vh / 2) * k;
+        img.style.transform = `translateY(${Math.max(-40, Math.min(40, c))}px)`;
+      });
+      header && header.classList.toggle("compact", y > 120);
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    frame();
   }
 
   /* ---------- Páginas ---------- */
@@ -437,16 +486,18 @@
     if (grid) { grid.innerHTML = P.filter((p) => p.featured).map(productCard).join(""); bindCards(grid); }
     const hero = $("#hero-visual");
     if (hero) {
-      const [a, b, c] = P;
-      hero.innerHTML = `
-        <div class="hero-bottle hb-1">${decantSVG(b || a, 10)}</div>
-        <div class="hero-bottle hb-2">${decantSVG(a, 30)}</div>
-        <div class="hero-bottle hb-3">${decantSVG(c || a, 5)}</div>`;
+      if (!hero.querySelector("img")) {
+        const [a, b, c] = P;
+        hero.innerHTML = `
+          <div class="hero-bottle hb-1">${decantSVG(b || a, 10)}</div>
+          <div class="hero-bottle hb-2">${decantSVG(a, 30)}</div>
+          <div class="hero-bottle hb-3">${decantSVG(c || a, 5)}</div>`;
+      }
     }
     const fmts = $("#formats-visual");
     if (fmts) {
       const p = P[0];
-      $$("[data-format]", fmts).forEach((el) => { el.innerHTML = decantSVG(p, +el.dataset.format); });
+      $$("[data-format]", fmts).forEach((el) => { const ml = +el.dataset.format; el.innerHTML = photo(p, ml) ? img(photo(p, ml), `Decant de ${ml} ml`) : decantSVG(p, ml); });
     }
     $$("[data-min-price]").forEach((el) => { el.textContent = fmt(Math.min(...P.map(minPrice))); });
   }
@@ -514,28 +565,29 @@
     let ml = p.stock[10] ? 10 : C.sizes.find((s) => p.stock[s]) || 10;
     let qty = 1;
 
-    document.title = `Decant ${p.name} · ${p.house} | JCJ Fragrance`;
+    document.title = `${p.name} de ${p.house} en decant | JCJ Fragrance`;
     const md = $('meta[name="description"]'); md && md.setAttribute("content", `Decant de ${p.name} (${p.house}) en 5, 10 y 30 ml. ${p.short}`);
 
-    const thumbs = p.images && p.images.length ? p.images : null;
+    const hasPhotos = !!photo(p, 10);
+    const views = hasPhotos ? [...C.sizes.filter((s) => photo(p, s)).map((s) => ({ ml: s, src: photo(p, s) })), ...(p.gallery || []).map((src) => ({ src }))] : null;
     root.innerHTML = `
       <nav class="crumbs container" aria-label="Ruta"><a href="index.html">Inicio</a><span>/</span><a href="catalogo.html">Catálogo</a><span>/</span><span aria-current="page">${esc(p.name)}</span></nav>
       <div class="container pdp">
         <div class="pdp-gallery">
-          <div class="pdp-main" id="pdp-main">${media(p, ml)}</div>
+          <div class="pdp-main" id="pdp-main">${media(p, ml, true)}</div>
           <div class="pdp-thumbs">
-            ${thumbs ? thumbs.map((src, i) => `<button class="pdp-thumb ${i === 0 ? "on" : ""}" data-i="${i}"><img src="${esc(src)}" alt="" loading="lazy"></button>`).join("")
-              : `<div class="pdp-trio">${trioSVG(p)}<p class="tiny muted center">Comparativo de formatos 5 · 10 · 30 ml. Ilustración de referencia; fotografía real próximamente.</p></div>`}
+            ${views ? views.map((v, i) => `<button class="pdp-thumb ${v.ml === ml ? "on" : ""}" data-i="${i}" ${v.ml ? `data-ml="${v.ml}"` : ""} aria-label="${v.ml ? `Ver ${v.ml} ml` : "Ver comparativa de formatos"}"><img class="photo ${v.ml ? "" : "photo-wide"}" src="${esc(v.src)}" alt="" loading="lazy"><span class="thumb-tag">${v.ml ? `${v.ml} ml` : "Tamaños"}</span></button>`).join("")
+              : `<div class="pdp-trio">${trioSVG(p)}<p class="tiny muted center">Tamaños de 5, 10 y 30 ml.</p></div>`}
           </div>
         </div>
         <div class="pdp-info">
-          <p class="eyebrow">${esc(p.house)} · ${esc(p.concentration)}</p>
+          <p class="pdp-house">${esc(p.house)}, ${esc(p.concentration)}</p>
           <h1 class="pdp-title">Decant ${esc(p.name)}</h1>
           <p class="pdp-short">${esc(p.short)}</p>
-          <p class="pdp-price"><span id="pdp-price">${fmt(p.prices[ml])}</span> <span class="muted" id="pdp-unit">· ${ml} ml</span></p>
+          <p class="pdp-price"><span id="pdp-price">${fmt(p.prices[ml])}</span> <span class="muted" id="pdp-unit">${ml} ml</span></p>
 
           <div class="pdp-block">
-            <p class="label">Elegir tamaño</p>
+            <p class="label">Tamaño</p>
             <div class="size-cards" role="radiogroup" aria-label="Tamaño">
               ${C.sizes.map((s) => `
                 <button role="radio" class="size-card ${s === ml ? "on" : ""}" aria-checked="${s === ml}" data-ml="${s}" ${p.stock[s] ? "" : "disabled"}>
@@ -557,11 +609,7 @@
           </div>
           <a class="btn btn-secondary btn-block btn-wa" id="pdp-wa" href="#" target="_blank" rel="noopener">${I.whatsapp} Comprar ahora por WhatsApp</a>
 
-          <ul class="pdp-trust">
-            <li>${I.truck}<span>Envíos a toda Colombia</span></li>
-            <li>${I.shield}<span>Origen y condición informados</span></li>
-            <li>${I.drop}<span>Atomizador de vidrio sellado</span></li>
-          </ul>
+          <p class="pdp-note">Lo enviamos a toda Colombia. El costo del envío depende de tu ciudad y te lo confirmamos por WhatsApp antes de pagar.</p>
 
           <div class="accordion">
             <details open>
@@ -573,16 +621,16 @@
                   <div><dt>Familia olfativa</dt><dd>${esc(p.family)}</dd></div>
                   <div><dt>Perfil</dt><dd>${esc(p.gender)}</dd></div>
                   <div><dt>Lanzamiento</dt><dd>${p.year}</dd></div>
-                  <div><dt>Momentos</dt><dd>${p.moments.map(esc).join(" · ")}</dd></div>
+                  <div><dt>Momentos</dt><dd>${p.moments.map(esc).join(", ")}</dd></div>
                 </dl>
               </div>
             </details>
             <details>
               <summary>Notas olfativas</summary>
               <div class="pyramid">
-                <div><p class="label">Salida</p><p>${p.notes.salida.map(esc).join(" · ")}</p></div>
-                <div><p class="label">Corazón</p><p>${p.notes.corazon.map(esc).join(" · ")}</p></div>
-                <div><p class="label">Fondo</p><p>${p.notes.fondo.map(esc).join(" · ")}</p></div>
+                <div><p class="label">Salida</p><p>${p.notes.salida.map(esc).join(", ")}</p></div>
+                <div><p class="label">Corazón</p><p>${p.notes.corazon.map(esc).join(", ")}</p></div>
+                <div><p class="label">Fondo</p><p>${p.notes.fondo.map(esc).join(", ")}</p></div>
                 <p class="tiny muted">Notas olfativas según información del fabricante.</p>
               </div>
             </details>
@@ -598,16 +646,19 @@
         </div>
       </div>
       <section class="section container">
-        <div class="section-head"><p class="eyebrow">Explorar colección</p><h2 class="h2">También te puede gustar</h2></div>
+        <h2 class="h2" style="margin-bottom:48px">Otros perfumes</h2>
         <div class="grid grid-3" id="related"></div>
       </section>`;
 
     const update = () => {
       $("#pdp-price").textContent = fmt(p.prices[ml] * qty);
-      $("#pdp-unit").textContent = `· ${ml} ml${qty > 1 ? ` × ${qty}` : ""}`;
-      $(".pdp-block .tiny").innerHTML = `Aprox. ${{ 5: "50", 10: "100", 30: "300" }[ml]} atomizaciones · estimado de referencia.`;
-      if (!thumbs) $("#pdp-main").innerHTML = decantSVG(p, ml, { fit: true });
-      $("#pdp-wa").href = waLink(`Hola JCJ Fragrance, quiero comprar:\n\n• Decant ${p.name} (${p.house}) · ${ml} ml × ${qty} — ${fmt(p.prices[ml] * qty)}\n\n¿Me confirman disponibilidad, costo de envío y medios de pago?`);
+      $("#pdp-unit").textContent = `${ml} ml${qty > 1 ? ` x ${qty}` : ""}`;
+      $(".pdp-block .tiny").innerHTML = `Rinde unas ${{ 5: "50", 10: "100", 30: "300" }[ml]} atomizaciones.`;
+      const main = $("#pdp-main");
+      main.classList.remove("wide");
+      main.innerHTML = media(p, ml, true);
+      $$(".pdp-thumb").forEach((x) => x.classList.toggle("on", +x.dataset.ml === ml));
+      $("#pdp-wa").href = waLink(`Hola JCJ Fragrance, quiero comprar:\n\n- ${p.name} (${p.house}), ${ml} ml x ${qty}: ${fmt(p.prices[ml] * qty)}\n\n¿Me confirman disponibilidad, costo de envío y medios de pago?`);
     };
     $$(".size-card").forEach((b) => b.addEventListener("click", () => {
       ml = +b.dataset.ml;
@@ -621,8 +672,12 @@
     $("#pdp-add").addEventListener("click", () => addToCart(p.slug, ml, qty, true));
     $("#pdp-wa").addEventListener("click", () => track("InitiateCheckout", { value: p.prices[ml] * qty, currency: "COP" }));
     $$(".pdp-thumb").forEach((b) => b.addEventListener("click", () => {
+      if (b.dataset.ml) { const sc = $(`.size-card[data-ml="${b.dataset.ml}"]`); sc && !sc.disabled && sc.click(); return; }
       $$(".pdp-thumb").forEach((x) => x.classList.toggle("on", x === b));
-      $("#pdp-main").innerHTML = media(p, ml, +b.dataset.i);
+      const v = views[+b.dataset.i];
+      const main = $("#pdp-main");
+      main.classList.add("wide");
+      main.innerHTML = `<img class="photo photo-wide" src="${esc(v.src)}" alt="Comparativa de formatos 5, 10 y 30 ml de ${esc(p.name)}">`;
     }));
     update();
 
@@ -681,7 +736,9 @@
     pageHome();
     pageCatalog();
     pageProduct();
+    splitHeadings();
     observeReveal();
+    motion();
     cookieBanner();
     // Monograma: animación de entrada discreta (Manual §12)
     requestAnimationFrame(() => document.body.classList.add("ready"));

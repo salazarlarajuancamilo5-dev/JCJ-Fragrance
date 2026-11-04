@@ -44,7 +44,8 @@ Sitio 100 % estático: funciona en GitHub Pages (Settings → Pages → rama `ma
 ## Pendiente antes del lanzamiento
 
 - [ ] Precios definitivos (los actuales son de referencia).
-- [ ] Fotografías reales de los decants.
+- [ ] Confirmar el perfume exacto de Jean Paul Gaultier (las etiquetas dicen solo "Jean Paul Gaultier"; en data.js figura como Le Male Elixir).
+- [ ] Fotografía real final (las actuales son mockups del kit, procesadas en `assets/img/products`).
 - [ ] Razón social, NIT y ciudad en `terminos.html` y `privacidad.html` (buscar `[RAZÓN SOCIAL]`).
 - [ ] Correo corporativo (`hola@jcjfragrance.com` es provisional).
 - [ ] Dominio y `canonical` en `index.html`.

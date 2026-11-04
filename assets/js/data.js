@@ -36,7 +36,9 @@ window.JCJ_CONFIG = {
   - stock:       disponibilidad por tamaño
   - condition:   condición informada del producto (ver Manual §02 y §13)
   - notes:       pirámide olfativa según información del fabricante
-  - images:      [] = usa ilustración JCJ. Para fotos reales: ["assets/img/products/khamrah-1.jpg", ...]
+  - images:      foto por tamaño { 5: "...", 10: "...", 30: "..." } (fondo blanco, 960×1200).
+                 Si se deja {} se usa la ilustración JCJ.
+  - gallery:     fotos extra para la ficha (comparativa de formatos, lifestyle, etc.)
 */
 window.JCJ_PRODUCTS = [
   {
@@ -62,7 +64,12 @@ window.JCJ_PRODUCTS = [
     prices: { 5: 25000, 10: 42000, 30: 95000 },
     stock: { 5: true, 10: true, 30: true },
     condition: "Fraccionado a partir de un frasco identificado. Origen y condición informados al confirmar el pedido.",
-    images: [],
+    images: {
+      5: "assets/img/products/khamrah-5.webp",
+      10: "assets/img/products/khamrah-10.webp",
+      30: "assets/img/products/khamrah-30.webp",
+    },
+    gallery: ["assets/img/products/khamrah-formatos.webp"],
   },
   {
     slug: "212-vip-black",
@@ -87,7 +94,12 @@ window.JCJ_PRODUCTS = [
     prices: { 5: 35000, 10: 60000, 30: 150000 },
     stock: { 5: true, 10: true, 30: true },
     condition: "Fraccionado a partir de un frasco identificado. Origen y condición informados al confirmar el pedido.",
-    images: [],
+    images: {
+      5: "assets/img/products/212-vip-black-5.webp",
+      10: "assets/img/products/212-vip-black-10.webp",
+      30: "assets/img/products/212-vip-black-30.webp",
+    },
+    gallery: ["assets/img/products/212-vip-black-formatos.webp"],
   },
   {
     slug: "le-male-elixir",
@@ -112,6 +124,11 @@ window.JCJ_PRODUCTS = [
     prices: { 5: 45000, 10: 80000, 30: 195000 },
     stock: { 5: true, 10: true, 30: true },
     condition: "Fraccionado a partir de un frasco identificado. Origen y condición informados al confirmar el pedido.",
-    images: [],
+    images: {
+      5: "assets/img/products/le-male-elixir-5.webp",
+      10: "assets/img/products/le-male-elixir-10.webp",
+      30: "assets/img/products/le-male-elixir-30.webp",
+    },
+    gallery: ["assets/img/products/le-male-elixir-formatos.webp"],
   },
 ];
