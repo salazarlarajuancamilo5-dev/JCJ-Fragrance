@@ -144,38 +144,28 @@ svg.fill { fill: currentColor; stroke: none; }
 .mobile-social { display: grid; gap: 14px; padding-top: 32px; font-size: 15px; }
 .mobile-social a { display: flex; align-items: center; gap: 12px; }
 
-/* ---------- Portada: tres decants al centro, zoom lento en bucle ---------- */
-.hero { --mx: 0; --my: 0; position: relative; height: calc(100svh - 104px); min-height: 640px; max-height: 980px; overflow: hidden; isolation: isolate;
-  background: radial-gradient(46% 60% at 50% 56%, #FFFFFF 0%, #FFFFFF 38%, rgba(255,255,255,0) 100%), linear-gradient(180deg, #FFFFFF 0%, #D9D9D9 100%); }
-.hero-grid { position: relative; height: 100%; display: grid; grid-template-columns: 1fr minmax(360px, 1.1fr) 1fr; align-items: center; gap: clamp(16px, 2vw, 40px); }
-.hero-title { font-size: clamp(40px, 4.3vw, 70px); max-width: 8.5ch; line-height: 1.02; position: relative; z-index: 3; align-self: center; will-change: transform, opacity; }
-.hero-side { position: relative; z-index: 3; align-self: center; will-change: transform, opacity; }
-.hero-sub { font-size: clamp(15px, 1.2vw, 18px); color: var(--graphite); max-width: 32ch; margin: 0 0 28px; }
-.hero-ctas { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.hero-ctas .btn { min-width: 230px; }
-.hero-stage { position: relative; align-self: stretch; container-type: size; z-index: 1; will-change: transform; }
-.hero-zoom { position: absolute; inset: 0; transform-origin: 50% 46%; animation: heroLoop 26s cubic-bezier(.45, 0, .25, 1) infinite; }
+/* ---------- Portada: imagen izquierda (solo zoom), texto derecha ---------- */
+.hero { position: relative; height: calc(100svh - 104px); min-height: 620px; max-height: 940px; overflow: hidden; background: #FFFFFF; }
+.hero .hero-grid { max-width: none; padding: 0; height: 100%; display: grid; grid-template-columns: 54% 46%; align-items: center; }
+.hero-stage { position: relative; height: 100%; overflow: hidden; background: radial-gradient(58% 52% at 50% 52%, #FFFFFF 0%, #FFFFFF 34%, rgba(255,255,255,0) 100%), linear-gradient(180deg, #FFFFFF 0%, #D9D9D9 100%); }
+.hero-zoom { position: absolute; inset: 8% 6% 4%; display: flex; align-items: flex-end; justify-content: center; transform-origin: 50% 55%; animation: heroLoop 28s cubic-bezier(.45, 0, .3, 1) infinite; }
+.hero-zoom img { height: 100%; width: auto; max-width: 100%; object-fit: contain; object-position: 50% 100%; }
 @keyframes heroLoop {
-  0%   { transform: scale(1.75); opacity: 0; filter: blur(4px); }
-  7%   { opacity: 1; filter: blur(0); }
-  88%  { transform: scale(1); opacity: 1; filter: blur(0); }
-  96%  { transform: scale(.985); opacity: 0; filter: blur(2px); }
-  100% { transform: scale(1.75); opacity: 0; }
+  0%   { transform: scale(1.7); opacity: 0; }
+  6%   { opacity: 1; }
+  90%  { transform: scale(1); opacity: 1; }
+  97%  { transform: scale(1); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
 }
-.hero-b { position: absolute; bottom: 4cqh; left: 50%; aspect-ratio: 4 / 5; transform: translate(calc(-50% + var(--ox, 0cqh) + var(--mx) * var(--k, 0px)), calc(var(--my) * var(--k, 0px) * .6)); transition: transform 1.2s cubic-bezier(.2, .8, .2, 1); }
-.hero-b img { width: 100%; height: 100%; animation: bob var(--bob, 7s) ease-in-out infinite alternate; }
-.hb-c { height: 90cqh; --ox: 0cqh; --k: 14px; z-index: 3; }
-.hb-l { height: 70cqh; --ox: -22cqh; --k: 30px; --bob: 8.5s; z-index: 2; }
-.hb-r { height: 57cqh; --ox: 21cqh; --k: 36px; --bob: 6.5s; z-index: 2; }
-.hb-l img { animation-delay: -2s; } .hb-r img { animation-delay: -4s; }
-@keyframes bob { from { transform: translateY(-1.2cqh); } to { transform: translateY(1.2cqh); } }
-.hero-floor { position: absolute; left: 10%; right: 10%; bottom: 2cqh; height: 6cqh; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.14), rgba(0,0,0,0) 70%); z-index: 0; }
+.hero-copy { max-width: 560px; padding: 0 var(--gutter) 0 clamp(40px, 6vw, 110px); }
+.hero-title { font-size: clamp(44px, 4.8vw, 76px); line-height: 1.02; margin: 0 0 28px; }
+.hero-sub { font-size: clamp(16px, 1.25vw, 18px); color: var(--graphite); max-width: 36ch; margin: 0 0 36px; padding-top: 28px; border-top: 1px solid var(--mist); }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 .hero-in { opacity: 0; transform: translateY(16px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
-.ready .hero-in { opacity: 1; transform: none; transition-delay: .9s; }
-.ready .hero-ctas.hero-in { transition-delay: 1.1s; }
+.ready .hero-in { opacity: 1; transform: none; transition-delay: .8s; }
+.ready .hero-ctas.hero-in { transition-delay: 1s; }
 .hero .words .w > span { transition-duration: 1.1s; }
-.hero .words.in .w > span { transition-delay: calc(var(--d, 0ms) + .3s); }
-.hero-bottle { height: 100%; } .hero-bottle .decant-svg { height: 100%; width: auto; }
+.hero .words.in .w > span { transition-delay: calc(var(--d, 0ms) + .2s); }
 
 .photo { display: block; }
 
@@ -542,11 +532,9 @@ details[open] > summary::after { transform: rotate(45deg); }
   .hero-grid { grid-template-columns: 1fr; min-height: 0; padding-top: 32px; gap: 12px; }
   .hero-grid > * { min-width: 0; }
   .hero { height: auto; min-height: 0; max-height: none; }
-  .hero-grid { grid-template-columns: 1fr; gap: 0; padding-top: 36px; padding-bottom: 40px; text-align: center; }
-  .hero-title { max-width: 11ch; margin: 0 auto; }
-  .hero-stage { height: min(56vh, 460px); margin: 8px 0 20px; }
-  .hero-sub { margin: 0 auto 22px; }
-  .hero-ctas { align-items: center; }
+  .hero .hero-grid { grid-template-columns: 1fr; gap: 32px; padding: 0 0 48px; }
+  .hero-stage { height: min(60vh, 480px); }
+  .hero-copy { max-width: none; padding: 0 var(--gutter); }
   .band-bottles img { margin: 0 -9vw; }
   .principles { grid-template-columns: 1fr 1fr; }
   .how-steps > div { grid-template-columns: 1fr; gap: 6px; }
@@ -571,10 +559,10 @@ details[open] > summary::after { transform: rotate(45deg); }
 }
 @media (max-width: 600px) {
   body { font-size: 16px; }
-  .hero-stage { height: 400px; }
-  .hero-title { font-size: 42px; }
-  .hero-ctas { flex-direction: row; justify-content: center; }
-  .hero-ctas .btn { min-width: 0; padding: 0 18px; }
+  .hero-stage { height: 420px; }
+  .hero-title { font-size: 42px; margin-bottom: 20px; }
+  .hero-sub { padding-top: 20px; margin-bottom: 28px; }
+  .hero-ctas .btn { flex: 1; padding: 0 16px; }
   .band { height: 340px; }
   .band-words { font-size: 30vw; margin-top: -16vw; }
   .band-bottles .s5 { height: 180px; } .band-bottles .s10 { height: 220px; } .band-bottles .s30 { height: 260px; }

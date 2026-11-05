@@ -452,7 +452,6 @@
 
   /* ---------- Movimiento ligado al scroll ---------- */
   function motion() {
-    const hero = $(".hero"), zoom = $(".hero-stage"), content = $(".hero-title"), side = $(".hero-side");
     const drifts = $$("[data-drift]");
     const par = $$("[data-parallax]");
     const header = $(".header-bar");
@@ -461,11 +460,6 @@
     const frame = () => {
       ticking = false;
       const y = window.scrollY, vh = window.innerHeight;
-      if (hero && zoom && y < vh * 1.2) {
-        const t = Math.min(y / vh, 1);
-        zoom.style.transform = `translateY(${t * 90}px) scale(${1 - t * 0.08})`;
-        [content, side].forEach((el, i) => { if (!el) return; el.style.opacity = String(1 - t * 1.5); el.style.transform = `translate(${(i ? 1 : -1) * t * 60}px, ${t * -30}px)`; });
-      }
       drifts.forEach((el) => {
         const r = el.parentElement.getBoundingClientRect();
         if (r.bottom < -200 || r.top > vh + 200) return;
@@ -485,16 +479,6 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     frame();
-
-    // Portada: los frascos siguen suavemente al cursor
-    if (hero && window.matchMedia("(pointer: fine)").matches) {
-      hero.addEventListener("pointermove", (e) => {
-        const r = hero.getBoundingClientRect();
-        hero.style.setProperty("--mx", ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
-        hero.style.setProperty("--my", ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
-      });
-      hero.addEventListener("pointerleave", () => { hero.style.setProperty("--mx", 0); hero.style.setProperty("--my", 0); });
-    }
 
     // Tarjetas: inclinación 3D al pasar el cursor
     if (window.matchMedia("(pointer: fine)").matches) {
@@ -532,7 +516,7 @@
       const p = P[0];
       $$("[data-format]", fmts).forEach((el) => {
         const ml = +el.dataset.format;
-        el.innerHTML = photo(p, ml) ? img(photo(p, ml), `Decant de ${ml} ml`) : decantSVG(p, ml);
+        el.innerHTML = img(`assets/img/products/decant-${ml}.webp`, `Decant JCJ de ${ml} ml`);
         const im = el.firstElementChild;
         if (im && el.dataset.speed) im.dataset.parallax = el.dataset.speed;
       });
