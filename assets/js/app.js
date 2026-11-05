@@ -157,7 +157,7 @@
       header.innerHTML = `
       <div class="announce" role="note" aria-label="Envíos a toda Colombia. Decants de 5, 10 y 30 ml. Pedidos por WhatsApp.">
         <div class="marquee" aria-hidden="true">
-          ${[0, 1].map(() => `<div class="marquee-group">${["Envíos a toda Colombia", "Decants de 5, 10 y 30 ml", "Khamrah", "212 VIP Black", "Jean Paul Gaultier", "Pedidos por WhatsApp 320 650 6648"].map((t) => `<span>${t}</span><img src="assets/brand/monogram-white.png" alt="" width="14" height="13">`).join("")}</div>`).join("")}
+          ${[0, 1].map(() => `<div class="marquee-group">${["Envíos a toda Colombia", "Decants de 5, 10 y 30 ml", "Pedidos por WhatsApp 320 650 6648", "Instagram @jcj_fragrance", "TikTok @jcj.fragrance"].map((t) => `<span>${t}</span><img src="assets/brand/monogram-white.png" alt="" width="14" height="13">`).join("")}</div>`).join("")}
         </div>
       </div>
       <div class="header-bar" role="banner">
@@ -418,7 +418,9 @@
         $$(".size", card).forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-checked", String(x === b)); });
         $(".price-val", card).textContent = fmt(p.prices[ml]);
         $(".price-unit", card).textContent = ` / ${ml} ml`;
-        $(".card-img", card).innerHTML = media(p, ml);
+        const ci = $(".card-img", card);
+        ci.innerHTML = media(p, ml);
+        ci.classList.remove("swap"); void ci.offsetWidth; ci.classList.add("swap");
       }));
       $(".add", card).addEventListener("click", () => addToCart(p.slug, +card.dataset.ml, 1, false));
     });
@@ -450,7 +452,8 @@
 
   /* ---------- Movimiento ligado al scroll ---------- */
   function motion() {
-    const hero = $(".hero"), zoom = $(".hero-zoom"), content = $(".hero-content");
+    const hero = $(".hero"), zoom = $(".hero-stage"), content = $(".hero-title"), side = $(".hero-side");
+    const drifts = $$("[data-drift]");
     const par = $$("[data-parallax]");
     const header = $(".header-bar");
     if (reduceMotion) return;
@@ -460,17 +463,21 @@
       const y = window.scrollY, vh = window.innerHeight;
       if (hero && zoom && y < vh * 1.2) {
         const t = Math.min(y / vh, 1);
-        zoom.style.setProperty("--sy", `${t * 70}px`);
-        zoom.style.setProperty("--ss", String(1 - t * 0.06));
-        content.style.opacity = String(1 - t * 1.4);
-        content.style.transform = `translateY(${t * -40}px)`;
+        zoom.style.transform = `translateY(${t * 90}px) scale(${1 - t * 0.08})`;
+        [content, side].forEach((el, i) => { if (!el) return; el.style.opacity = String(1 - t * 1.5); el.style.transform = `translate(${(i ? 1 : -1) * t * 60}px, ${t * -30}px)`; });
       }
+      drifts.forEach((el) => {
+        const r = el.parentElement.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        const k = parseFloat(el.dataset.drift) || 0.3;
+        el.style.transform = `translate3d(${(r.top + r.height / 2 - vh / 2) * k}px, 0, 0)`;
+      });
       par.forEach((img) => {
         const r = img.parentElement.getBoundingClientRect();
         if (r.bottom < 0 || r.top > vh) return;
         const k = parseFloat(img.dataset.parallax) || 0.1;
         const c = (r.top + r.height / 2 - vh / 2) * k;
-        img.style.transform = `translateY(${Math.max(-40, Math.min(40, c))}px)`;
+        img.style.transform = `translateY(${Math.max(-60, Math.min(60, c))}px)`;
       });
       header && header.classList.toggle("compact", y > 120);
     };
@@ -478,6 +485,32 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     frame();
+
+    // Portada: los frascos siguen suavemente al cursor
+    if (hero && window.matchMedia("(pointer: fine)").matches) {
+      hero.addEventListener("pointermove", (e) => {
+        const r = hero.getBoundingClientRect();
+        hero.style.setProperty("--mx", ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+        hero.style.setProperty("--my", ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+      });
+      hero.addEventListener("pointerleave", () => { hero.style.setProperty("--mx", 0); hero.style.setProperty("--my", 0); });
+    }
+
+    // Tarjetas: inclinación 3D al pasar el cursor
+    if (window.matchMedia("(pointer: fine)").matches) {
+      document.addEventListener("pointermove", (e) => {
+        const m = e.target.closest && e.target.closest(".card-media, .pdp-main");
+        $$(".tilt-on").forEach((x) => { if (x !== m) { x.classList.remove("tilt-on"); x.style.removeProperty("--rx"); x.style.removeProperty("--ry"); } });
+        if (!m) return;
+        const r = m.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+        m.classList.add("tilt-on");
+        m.style.setProperty("--rx", (py * -8).toFixed(2) + "deg");
+        m.style.setProperty("--ry", (px * 10).toFixed(2) + "deg");
+        m.style.setProperty("--gx", ((px + 0.5) * 100).toFixed(1) + "%");
+        m.style.setProperty("--gy", ((py + 0.5) * 100).toFixed(1) + "%");
+      });
+    }
   }
 
   /* ---------- Páginas ---------- */
@@ -497,7 +530,12 @@
     const fmts = $("#formats-visual");
     if (fmts) {
       const p = P[0];
-      $$("[data-format]", fmts).forEach((el) => { const ml = +el.dataset.format; el.innerHTML = photo(p, ml) ? img(photo(p, ml), `Decant de ${ml} ml`) : decantSVG(p, ml); });
+      $$("[data-format]", fmts).forEach((el) => {
+        const ml = +el.dataset.format;
+        el.innerHTML = photo(p, ml) ? img(photo(p, ml), `Decant de ${ml} ml`) : decantSVG(p, ml);
+        const im = el.firstElementChild;
+        if (im && el.dataset.speed) im.dataset.parallax = el.dataset.speed;
+      });
     }
     $$("[data-min-price]").forEach((el) => { el.textContent = fmt(Math.min(...P.map(minPrice))); });
   }
