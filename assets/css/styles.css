@@ -147,15 +147,16 @@ svg.fill { fill: currentColor; stroke: none; }
 /* ---------- Portada: imagen izquierda (solo zoom), texto derecha ---------- */
 .hero { position: relative; height: calc(100svh - 104px); min-height: 620px; max-height: 940px; overflow: hidden; background: #FFFFFF; }
 .hero .hero-grid { max-width: none; padding: 0; height: 100%; display: grid; grid-template-columns: 54% 46%; align-items: center; }
-.hero-stage { position: relative; height: 100%; overflow: hidden; background: radial-gradient(58% 52% at 50% 52%, #FFFFFF 0%, #FFFFFF 34%, rgba(255,255,255,0) 100%), linear-gradient(180deg, #FFFFFF 0%, #D9D9D9 100%); }
-.hero-zoom { position: absolute; inset: 8% 6% 4%; display: flex; align-items: flex-end; justify-content: center; transform-origin: 50% 55%; animation: heroLoop 28s cubic-bezier(.45, 0, .3, 1) infinite; }
-.hero-zoom img { height: 100%; width: auto; max-width: 100%; object-fit: contain; object-position: 50% 100%; }
+.hero-stage { position: relative; height: 100%; background: transparent; }
+.hero-zoom { position: absolute; inset: 5% 4% 3%; display: flex; align-items: center; justify-content: center; transform-origin: 50% 60%; animation: heroLoop 30s cubic-bezier(.4, 0, .3, 1) infinite; backface-visibility: hidden; }
+.hero-zoom img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+/* arranca en tamaño real (nítido y completo) y se aleja; nunca se amplía por encima de 1 */
 @keyframes heroLoop {
-  0%   { transform: scale(1.7); opacity: 0; }
-  6%   { opacity: 1; }
-  90%  { transform: scale(1); opacity: 1; }
-  97%  { transform: scale(1); opacity: 0; }
-  100% { transform: scale(1.7); opacity: 0; }
+  0%   { transform: scale(1); opacity: 0; }
+  5%   { opacity: 1; }
+  90%  { transform: scale(.74); opacity: 1; }
+  97%  { transform: scale(.74); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
 }
 .hero-copy { max-width: 560px; padding: 0 var(--gutter) 0 clamp(40px, 6vw, 110px); }
 .hero-title { font-size: clamp(44px, 4.8vw, 76px); line-height: 1.02; margin: 0 0 28px; }
